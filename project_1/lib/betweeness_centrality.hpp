@@ -5,6 +5,11 @@
 
 // Here we find an implementation of Brande's algorithm for finding the
 // betweeness centrality of vertices of an unweighted graph.
+//
+// Source:
+//   Ulrik Brandes, A Faster Algorithm for Betweenness Centrality
+//   Journal of Mathematical Sociology 25(2):163-177, (2001)
+//   http://algo.uni-konstanz.de/publications/b-fabc-01.pdf
 
 namespace project_1 {
 
