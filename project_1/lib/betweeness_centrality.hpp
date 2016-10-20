@@ -10,124 +10,105 @@ namespace project_1 {
 
   using namespace boost;
 
+
   // Helper functions
 
-  // Given a vector of doubles, returns their distribution.
-  //
-  // For example,
-  //
-  // // 2 zeros, 5 ones, 2 twos, 4 threes, 3 fours, 4 fives, 20 in total
-  // auto dist = distribution({ 0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4,
-  //       5, 5, 5, 5 });
-  //
-  // for (size_t i = 0; i < dist.size(); ++i)
-  //   std::cout << "distribution[" << i << "] = " << dist.at(i) << std::endl;
-  //
-  // prints
-  //
-  //   distribution[0] = 0.1
-  //   distribution[1] = 0.25
-  //   distribution[2] = 0.1
-  //   distribution[3] = 0.2
-  //   distribution[4] = 0.15
-  //   distribution[5] = 0.2
-  std::vector<double> distribution(const std::vector<double> vs) {
-    const size_t dist_size = std::floor(*std::max_element(vs.begin(), vs.end())) + 1;
-    std::vector<double> dist(dist_size, 0.0);
+  template <class Graph>
+  void betweeness_normalize(const Graph& g, std::vector<double> xs) {
+    using Cat = typename graph_traits<Graph>::directed_category;
 
-    for (auto v: vs) {
-      dist.at(std::floor(v))++;
-    }
-    const double sum = std::accumulate(dist.begin(), dist.end(), 0.0);
+    const auto V = num_vertices(g);
+    const double factor = boost::detail::is_directed(Cat()) ? 1 : 2;
 
-    for (auto &x: dist) {
-      x /= sum;
+    for (auto &x: xs) {
+      x /= (V - 1) * (V - 2);
+      x /= factor;
     }
-    return dist;
   }
+
 
   // Betweeness Centrality functions
 
   template <class Graph>
   using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
 
-  // Returns the betweeness centrality of vertex v on the graph g.
+  // Calculates the betweeness centrality distribution for all vertices on graph
+  // g by using Brande's algorithm for unweighted graphs.
+  //
+  // If normalized = true, then the betweeness values are normalized by
+  // 2 / ((n - 1) * (n - 2)) for undirected graphs, and 1 / ((n - 1) * (n - 2))
+  // for directed graphs where n is the number of nodes in G.
   template <class Graph>
-  double betweeness_centrality(vertex_descriptor<Graph> s, const Graph& g);
-
-
-  // Returns the betweeness centrality of the vertex v on the graph g divided by
-  //  the total number of pairs of vertices not including v. The resulting value
-  //  will be in [0,1].
-  template <class Graph>
-  double normalized_betweeness_centrality(vertex_descriptor<Graph> v, const Graph& g);
-
-  // Calculates the betweeness centrality distribution of the vertex v on the
-  // graph g by using Brande's algorithm for unweighted graphs.
-  template <class Graph>
-  std::vector<double> betweeness_centrality_distribution(const Graph& g) {
+  std::vector<double> betweeness_centrality(const Graph& g, bool normalized = true) {
     const auto V = num_vertices(g);
     const auto index = get(vertex_index, g);
 
-    std::vector<double> C_b(V, 0);
+    std::vector<double> bs(V, 0); // betweeness values
 
     BGL_FORALL_VERTICES_T(s, g, Graph) {
-      std::vector<vertex_descriptor<Graph>> S(V);
-      std::queue<vertex_descriptor<Graph>> Q; Q.push(s);
+      std::vector<vertex_descriptor<Graph>> stack(V);
 
-      std::vector<std::vector<vertex_descriptor<Graph>>> P(V);
-      std::vector<double> sigma(V, 0); sigma[index[s]] = 1;
-      std::vector<double> d(V, -1); d[index[s]] = 0;
+      std::queue<vertex_descriptor<Graph>> queue;
+      queue.push(s);
 
-      while (!Q.empty()) {
-        vertex_descriptor<Graph> v = Q.front(); Q.pop();
-        S.push_back(v);
+      // predecessors of vertex s
+      std::vector<std::vector<vertex_descriptor<Graph>>> preds(V);
+
+      std::vector<double> sigma(V, 0);
+      sigma.at(index[s]) = 1;
+
+      std::vector<double> d(V, -1);
+      d.at(index[s]) = 0;
+
+      while (!queue.empty()) {
+        vertex_descriptor<Graph> v = queue.front();
+        queue.pop();
+        stack.push_back(v);
 
         BGL_FORALL_ADJ_T(v, w, g, Graph) {
-          // w found for the first time?
-          if (d[index[w]] < 0) {
-            Q.push(w);
-            d[index[w]] = d[index[v]] + 1;
+          if (d.at(index[w]) < 0) { // w found for the first time?
+            queue.push(w);
+            d.at(index[w]) = d.at(index[v]) + 1;
           }
-          // shortest path to w via v?
-          if (d[index[w]] == d[index[v]] + 1) {
-            sigma[index[w]] += sigma[index[v]];
-            P[index[w]].push_back(v);
+
+          if (d.at(index[w]) == d.at(index[v]) + 1) { // shortest path to w via v?
+            sigma.at(index[w]) += sigma.at(index[v]);
+            preds.at(index[w]).push_back(v);
           }
         }
       }
 
       std::vector<double> delta(V, 0);
 
-      // S returns vertices in order of non-increasing distance from s
-      while (!S.empty()) {
-        vertex_descriptor<Graph> w = S.back(); S.pop_back();
+      // stack returns vertices in order of non-increasing distance from s
+      while (!stack.empty()) {
+        vertex_descriptor<Graph> w = stack.back(); stack.pop_back();
 
-        for (auto &v : P[index[w]]) {
-          delta[index[v]] +=
-            (sigma[index[v]] / sigma[index[w]]) * (1 + delta[index[w]]);
+        for (auto &v : preds.at(index[w])) {
+          delta.at(index[v]) +=
+            (sigma.at(index[v]) / sigma.at(index[w])) * (1 + delta.at(index[w]));
         }
 
         if (w != s) {
-          C_b[index[w]] += delta[index[w]];
+          bs.at(index[w]) += delta.at(index[w]);
         }
       }
     }
 
-    // typedef typename graph_traits<Graph>::directed_category Cat;
-    // if(boost::detail::is_directed(Cat())) {
-    //   std::for_each(C_b.begin(), C_b.end(), [&V](double &b) {
-    //       b /= ((V - 1) * (V - 2));
-    //     });
-    // } else {
-    //   std::for_each(C_b.begin(), C_b.end(), [&V](double &b) {
-    //       b /= ((V - 1) * (V - 2) / 2);
-    //     });
-    // }
-
-    return distribution(C_b);
-
+    if (normalized) {
+      betweeness_normalize<Graph>(g, bs);
+    }
+    return bs;
   }
+
+  // Returns the betweeness centrality of vertex v on the graph g.
+  template <class Graph>
+  double betweeness_centrality(vertex_descriptor<Graph> v, const Graph& g,
+                               bool normalized = true) {
+    // FIXME: C'mon there must be a better way to do this than this obvious way
+    return betweeness_centrality<Graph>(g, normalized).at(get(vertex_index, g, v));
+  }
+
 
 
 };
