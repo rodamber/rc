@@ -51,28 +51,30 @@ namespace project_1 {
   // for directed graphs where n is the number of nodes in G.
   template <class Graph>
   std::vector<double> betweeness_centrality(const Graph& g, bool normalized = true) {
+    using vertex = vertex_descriptor<Graph>;
+    using std::vector;
+
     const auto V = num_vertices(g);
     const auto index = get(vertex_index, g);
-
-    std::vector<double> bs(V, 0); // betweeness values
+    vector<double> scores(V, 0); // betweeness values
 
     BGL_FORALL_VERTICES_T(s, g, Graph) {
-      std::vector<vertex_descriptor<Graph>> stack(V);
+      vector<vertex> stack(V);
 
-      std::queue<vertex_descriptor<Graph>> queue;
+      std::queue<vertex> queue;
       queue.push(s);
 
-      // predecessors of vertex s
-      std::vector<std::vector<vertex_descriptor<Graph>>> preds(V);
+      vector<vector<vertex>> predecessors(V);
 
-      std::vector<double> sigma(V, 0);
+      vector<double> sigma(V, 0);
       sigma.at(index[s]) = 1;
 
-      std::vector<double> d(V, -1);
+      vector<double> d(V, -1);
       d.at(index[s]) = 0;
 
       while (!queue.empty()) {
-        vertex_descriptor<Graph> v = queue.front();
+        vertex v = queue.front();
+
         queue.pop();
         stack.push_back(v);
 
@@ -84,42 +86,41 @@ namespace project_1 {
 
           if (d.at(index[w]) == d.at(index[v]) + 1) { // shortest path to w via v?
             sigma.at(index[w]) += sigma.at(index[v]);
-            preds.at(index[w]).push_back(v);
+            predecessors.at(index[w]).push_back(v);
           }
         }
       }
-
-      std::vector<double> delta(V, 0);
+      vector<double> delta(V, 0);
 
       // stack returns vertices in order of non-increasing distance from s
       while (!stack.empty()) {
-        vertex_descriptor<Graph> w = stack.back(); stack.pop_back();
+        vertex w = stack.back(); stack.pop_back();
 
-        for (auto &v : preds.at(index[w])) {
+        for (auto &v : predecessors.at(index[w])) {
           delta.at(index[v]) +=
             (sigma.at(index[v]) / sigma.at(index[w])) * (1 + delta.at(index[w]));
         }
 
         if (w != s) {
-          bs.at(index[w]) += delta.at(index[w]);
+          scores.at(index[w]) += delta.at(index[w]);
         }
       }
     }
 
     if (!is_directed<Graph>()) {
-      std::for_each(bs.begin(), bs.end(), [](double &b) { b /= 2; });
+      std::for_each(scores.begin(), scores.end(), [](double &b) { b /= 2; });
     }
     if (normalized) {
-      betweeness_normalize<Graph>(g, bs);
+      betweeness_normalize<Graph>(g, scores);
     }
-    return bs;
+    return scores;
   }
 
   // Returns the betweeness centrality of vertex v on the graph g.
   template <class Graph>
   double betweeness_centrality(vertex_descriptor<Graph> v, const Graph& g,
                                bool normalized = true) {
-    // FIXME: there must be a better way to do this
+    // TODO: there must be a better way to do this
     return betweeness_centrality<Graph>(g, normalized).at(get(vertex_index, g, v));
   }
 
