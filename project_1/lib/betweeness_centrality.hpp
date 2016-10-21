@@ -1,8 +1,3 @@
-#pragma once
-
-#include <boost/graph/graph_traits.hpp>
-#include <vector>
-
 // Here we find an implementation of Brande's algorithm for finding the
 // betweeness centrality of vertices of an unweighted graph.
 //
@@ -10,6 +5,13 @@
 //   Ulrik Brandes, A Faster Algorithm for Betweenness Centrality
 //   Journal of Mathematical Sociology 25(2):163-177, (2001)
 //   http://algo.uni-konstanz.de/publications/b-fabc-01.pdf
+
+// TODO: Generalize to weighted graphs
+
+#pragma once
+
+#include <boost/graph/graph_traits.hpp>
+#include <vector>
 
 namespace project_1 {
 
@@ -19,15 +21,19 @@ namespace project_1 {
   // Helper functions
 
   template <class Graph>
-  void betweeness_normalize(const Graph& g, std::vector<double> xs) {
+  bool is_directed() {
     using Cat = typename graph_traits<Graph>::directed_category;
+    return boost::detail::is_directed(Cat());
+  }
 
+  template <class Graph>
+  void betweeness_normalize(const Graph& g, std::vector<double>& xs) {
     const auto V = num_vertices(g);
-    const double factor = boost::detail::is_directed(Cat()) ? 1 : 2;
+    const double factor = is_directed<Graph>() ? 1 : 2;
 
     for (auto &x: xs) {
       x /= (V - 1) * (V - 2);
-      x /= factor;
+      x *= factor;
     }
   }
 
@@ -100,6 +106,9 @@ namespace project_1 {
       }
     }
 
+    if (!is_directed<Graph>()) {
+      std::for_each(bs.begin(), bs.end(), [](double &b) { b /= 2; });
+    }
     if (normalized) {
       betweeness_normalize<Graph>(g, bs);
     }
@@ -110,7 +119,7 @@ namespace project_1 {
   template <class Graph>
   double betweeness_centrality(vertex_descriptor<Graph> v, const Graph& g,
                                bool normalized = true) {
-    // FIXME: C'mon there must be a better way to do this than this obvious way
+    // FIXME: there must be a better way to do this
     return betweeness_centrality<Graph>(g, normalized).at(get(vertex_index, g, v));
   }
 
