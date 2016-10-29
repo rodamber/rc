@@ -20,6 +20,7 @@
 namespace project_1 {
 
   using namespace boost;
+  using namespace util::graph;
 
   // ---------------------------------------------------------------------------
   // Helper functions
@@ -40,9 +41,6 @@ namespace project_1 {
   // ---------------------------------------------------------------------------
   // Betweeness Centrality functions
   // ---------------------------------------------------------------------------
-
-  template <class Graph>
-  using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
 
   // Calculates the betweeness centrality distribution for all vertices on graph
   // g by using Brande's algorithm for unweighted graphs.

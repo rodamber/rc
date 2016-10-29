@@ -9,6 +9,7 @@
 namespace project_1 {
 
   using namespace boost;
+  using namespace util::graph;
 
   // ---------------------------------------------------------------------------
   // Helper functions
