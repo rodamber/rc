@@ -15,6 +15,8 @@
 #include <queue>
 #include <vector>
 
+#include <util.hpp>
+
 namespace project_1 {
 
   using namespace boost;
@@ -22,12 +24,6 @@ namespace project_1 {
   // ---------------------------------------------------------------------------
   // Helper functions
   // ---------------------------------------------------------------------------
-
-  template <class Graph>
-  bool is_directed() {
-    using Cat = typename graph_traits<Graph>::directed_category;
-    return boost::detail::is_directed(Cat());
-  }
 
   template <class Graph>
   void betweeness_normalize(const Graph& g, std::vector<double>& xs) {
