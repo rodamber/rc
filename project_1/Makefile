@@ -4,7 +4,7 @@
 CC = g++
 CC_FLAGS = -std=c++17 -Wall -Wextra -Wfatal-errors -Wno-unused-parameter \
 					 -Wno-unused-variable -Wno-literal-suffix -Wno-parentheses \
-					 -O3
+					 -g
 
 INCLUDES = -Ilib
 
