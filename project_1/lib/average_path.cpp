@@ -1,9 +1,8 @@
-#include "average_path.hpp"
 #include <boost/lambda/lambda.hpp>
 #include <iostream>                  // for std::cout
 #include <utility>                   // for std::pair
 #include <algorithm>                 // for std::for_each
-#include <vector> 
+#include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -24,27 +23,28 @@ namespace project_1 {
 	double averagePath(const Graph& g) {
 		//Typedefs
 		typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-		typedef graph_traits<Graph>::vertex_iterator vi;
+		typedef typename graph_traits<Graph>::vertex_iterator vi;
+		typedef typename property_map<Graph, vertex_index_t>::type IndexMap;
+		typedef typename graph_traits<Graph>::vertices_size_type vertexSize;
 
 		// vector for storing distance property
 		std::vector<int> distances(num_vertices(g));
 
 		double totalSum = 0;
 
-		boost::property_map<Graph, vertex_index_t>::type
-			id = get(vertex_index, g);
+		IndexMap id = get(vertex_index, g);
 		std::pair<vi, vi> vp;
 
 		//Iterate through vertices
 		for (vp = vertices(g); vp.first != vp.second; ++vp.first) {
 			Vertex v = *vp.first;
 
-			graph_traits<Graph>::vertices_size_type *d;
-			d = new graph_traits<Graph>::vertices_size_type[num_vertices(g)];
+			vertexSize d = new vertexSize[num_vertices(g)];
+
 			std::fill_n(d, num_vertices(g), 0);
 
 			//BFS
-			breadth_first_search(g, *vp.first, boost::visitor(
+			breadth_first_search(g, *vp.first, visitor(
 				boost::make_bfs_visitor(boost::record_distances(d, boost::on_tree_edge()))));
 
 			std::copy(d, d + num_vertices(g), distances.begin());
@@ -67,5 +67,6 @@ namespace project_1 {
 	}
 };
 
-
-
+int main(){
+	return 0;
+}
