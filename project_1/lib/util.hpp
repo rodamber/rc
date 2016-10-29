@@ -12,13 +12,30 @@ namespace project_1 { namespace util {
   using namespace boost;
 
   namespace graph {
-    template <class Graph>
+    template<class Graph>
     using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
 
-    template <class Graph>
-    inline bool undirected() {
+    template<class Graph>
+    using edge_descriptor = typename graph_traits<Graph>::edge_descriptor;
+
+    template<class Graph>
+    using adjacency_iterator = typename graph_traits<Graph>::adjacency_iterator;
+
+    template<class Graph>
+    using vertex_iterator = typename graph_traits<Graph>::vertex_iterator;
+
+    template<class Graph>
+    using edge_iterator = typename graph_traits<Graph>::edge_iterator;
+
+    template<class Graph>
+    inline bool directed() {
       using Cat = typename graph_traits<Graph>::directed_category;
-      return !boost::detail::is_directed(Cat());
+      return boost::detail::is_directed(Cat());
+    }
+
+    template<class Graph>
+    inline bool undirected() {
+      return !directed<Graph>();
     }
 
   };
