@@ -1,26 +1,18 @@
 #pragma once
 
-#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/iteration_macros.hpp>
 
-// #include <unordered_map>
 #include <unordered_set>
-// #include <utility>
-#include <vector>
+
+#include <util.hpp>
 
 namespace project_1 {
 
   using namespace boost;
 
-  template <class Graph>
-  using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
-
+  // ---------------------------------------------------------------------------
   // Helper functions
-
-  template <class Graph>
-  inline bool undirected() {
-    using Cat = typename graph_traits<Graph>::directed_category;
-    return !boost::detail::is_directed(Cat());
-  }
+  // ---------------------------------------------------------------------------
 
   template <class Graph>
   inline void normalize(double &x, size_t k) {
@@ -38,15 +30,16 @@ namespace project_1 {
     tie(u_it, u_end) = adjacent_vertices(u, g);
     tie(v_it, v_end) = adjacent_vertices(v, g);
 
-    unordered_set<int> set(u_it, u_end);
+    std::unordered_set<int> set(u_it, u_end);
     return count_if(v_it, v_end, [&](int k) {
         return set.find(k) != set.end();
       });
   }
 
 
+  // ---------------------------------------------------------------------------
   // Clustering coefficient
-
+  // ---------------------------------------------------------------------------
 
   // Computes the local clustering coefficient for nodes on unweighted graphs.
   template <class Graph>
@@ -61,6 +54,8 @@ namespace project_1 {
     return score;
   }
 
+  // Computes the local clustering coefficients on unweighted graphs for all
+  // nodes.
   template <class Graph>
   std::vector<double> clusterings(const Graph &g) {
     std::vector<double> scores(num_vertices(g), 0.0);
@@ -76,7 +71,7 @@ namespace project_1 {
       if (degrees[s] < 2)
         break;
 
-      size_t common = num_common_adjacent_vertices<Graph>(s, t, g);
+      const size_t common = num_common_adjacent_vertices<Graph>(s, t, g);
       scores[s] += common;
 
       if (undirected<Graph>()) {
@@ -91,11 +86,11 @@ namespace project_1 {
     return scores;
   }
 
+  // Computes the average of all the local clustering coefficients.
   template <class Graph>
   double average_clustering(const Graph& g) {
     auto cs = clusterings(g);
     return std::accumulate(cs.begin(), cs.end(), 0.0) / num_vertices(g);
   }
-
 
 };
