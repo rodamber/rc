@@ -7,17 +7,24 @@
 #include <barabasi_albert.hpp>
 #include <util.hpp>
 
+
+using namespace boost;
+using namespace project_1;
+
+using std::cout;
+using std::cin;
+using std::endl;
+
+using Graph = adjacency_list<vecS, vecS, undirectedS>;
+
+void barabasi_albert_example();
+
 int main() {
+  barabasi_albert_example();
+  return 0;
+}
 
-  using namespace boost;
-  using namespace project_1;
-
-  using std::cout;
-  using std::cin;
-  using std::endl;
-
-  using Graph = adjacency_list<vecS, vecS, undirectedS>;
-
+void barabasi_albert_example() {
   int V = 0;
 
   cout << "V = "; cin >> V; cout << endl;
@@ -30,6 +37,4 @@ int main() {
   barabasi_albert<Graph>(V - 2, g);
 
   util::print::print_graph_in_adjacency_list_format(g);
-
-  return 0;
 }
