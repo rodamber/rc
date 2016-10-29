@@ -6,19 +6,22 @@
 //   Journal of Mathematical Sociology 25(2):163-177, (2001)
 //   http://algo.uni-konstanz.de/publications/b-fabc-01.pdf
 
-// TODO: Generalize to weighted graphs
-
 #pragma once
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/properties.hpp>
+
+#include <queue>
 #include <vector>
 
 namespace project_1 {
 
   using namespace boost;
 
-
+  // ---------------------------------------------------------------------------
   // Helper functions
+  // ---------------------------------------------------------------------------
 
   template <class Graph>
   bool is_directed() {
@@ -38,7 +41,9 @@ namespace project_1 {
   }
 
 
+  // ---------------------------------------------------------------------------
   // Betweeness Centrality functions
+  // ---------------------------------------------------------------------------
 
   template <class Graph>
   using vertex_descriptor = typename graph_traits<Graph>::vertex_descriptor;
@@ -50,7 +55,7 @@ namespace project_1 {
   // 2 / ((n - 1) * (n - 2)) for undirected graphs, and 1 / ((n - 1) * (n - 2))
   // for directed graphs where n is the number of nodes in G.
   template <class Graph>
-  std::vector<double> betweeness_centrality(const Graph& g, bool normalized = true) {
+  std::vector<double> betweeness(const Graph& g, bool normalized = true) {
     using vertex = vertex_descriptor<Graph>;
     using std::vector;
 
@@ -116,14 +121,4 @@ namespace project_1 {
     return scores;
   }
 
-  // Returns the betweeness centrality of vertex v on the graph g.
-  template <class Graph>
-  double betweeness_centrality(vertex_descriptor<Graph> v, const Graph& g,
-                               bool normalized = true) {
-    // TODO: there must be a better way to do this
-    return betweeness_centrality<Graph>(g, normalized).at(get(vertex_index, g, v));
-  }
-
-
-
-};
+}; // namespace project_1
