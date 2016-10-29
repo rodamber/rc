@@ -44,8 +44,6 @@ namespace project_1 {
     while(new_vertices_count--) {
       ba_add_vertex();
     }
-
-    return g;
   }
 
 }; // namespace project_1/
