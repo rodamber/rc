@@ -1,21 +1,18 @@
 #pragma once
 
-#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/iteration_macros.hpp>
+
+#include <util.hpp>
+
+using namespace boost;
 
 template <class Graph>
-std::vector<unsigned> all_vertex_degree(const Graph& g)
-{
-  typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
-  typename boost::graph_traits<Graph>::vertex_iterator vi, vi_end;
+std::vector<size_t> all_vertex_degree(const Graph& g) {
+  std::vector<size_t> degrees(num_vertices(g));
+  const auto index = get(vertex_index, g);
 
-  std::vector<unsigned> degree_list;
-  unsigned degree = 0;
-
-  for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; vi++){
-    for(boost::tie(ai, ai_end) = adjacent_vertices(*vi, g);ai != ai_end; ai++)
-      degree++;
-    degree_list.push_back(degree);
-    degree = 0;
+  BGL_FORALL_VERTICES_T(v, g, Graph) {
+    degrees[index[v]] = out_degree(v, g);
   }
-  return degree_list;
+  return degrees;
 }
