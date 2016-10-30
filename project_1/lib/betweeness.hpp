@@ -29,7 +29,7 @@ namespace project_1 {
   template <class Graph>
   void betweeness_normalize(const Graph& g, std::vector<double>& xs) {
     const auto V = num_vertices(g);
-    const double factor = is_directed<Graph>() ? 1 : 2;
+    const double factor = directed<Graph>() ? 1 : 2;
 
     for (auto &x: xs) {
       x /= (V - 1) * (V - 2);
@@ -106,7 +106,7 @@ namespace project_1 {
       }
     }
 
-    if (!is_directed<Graph>()) {
+    if (undirected<Graph>()) {
       std::for_each(scores.begin(), scores.end(), [](double &b) { b /= 2; });
     }
     if (normalized) {

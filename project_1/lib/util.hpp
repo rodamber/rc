@@ -4,6 +4,9 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 
+#include <iomanip>
+#include <iostream>
+
 #include <random>
 
 
@@ -88,6 +91,17 @@ namespace project_1 { namespace util {
         }
         std::cout << "." << std::endl;
       }
+    }
+
+    template<class T, class X>
+    void to_csv(const std::vector<T> &xs, const std::vector<X> &ys, std::ostream &os) {
+      if (xs.size() != ys.size()) {
+        throw std::runtime_error("xs must have the same size as ys");
+      }
+      for (size_t i = 0; i < xs.size(); ++i) {
+        os << std::setprecision(2) << xs[i] << "," << ys[i] << "\n";
+      }
+      os << std::endl;
     }
 
 
