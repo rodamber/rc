@@ -11,7 +11,7 @@ INCLUDES = -Ilib
 
 # File names
 EXEC = main
-SOURCES = $(wildcard *.cpp)
+SOURCES = $(wildcard main.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Main target
