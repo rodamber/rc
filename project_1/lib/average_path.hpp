@@ -5,6 +5,7 @@
 
 namespace project_1 {
 	using namespace boost;
+  using namespace util::graph;
 
 	//	Average Path Algorithm
 	//
@@ -15,7 +16,7 @@ namespace project_1 {
 	template <class Graph>
 	double average_path(const Graph& g) {
 		//Typedefs
-		vertex_descriptor<Graph> u;
+    vertex_descriptor<Graph> u;
 		typedef typename graph_traits<Graph>::vertex_iterator vi;
 		typedef typename property_map<Graph, vertex_index_t>::type IndexMap;
 		typedef typename graph_traits<Graph>::vertices_size_type vertexSize;

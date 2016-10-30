@@ -9,6 +9,7 @@
 namespace project_1 {
 
   using namespace boost;
+  using namespace util::graph;
 
   // Takes a connected, undirected and mutable graph and adds new_vertices_count
   // vertices to graph g.

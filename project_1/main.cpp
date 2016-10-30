@@ -4,14 +4,14 @@
 #include <iomanip>
 #include <iostream>
 
-#include <clustering.hpp>
+#include <average_path.hpp>
+#include <barabasi_albert.hpp>
 #include <betweeness.hpp>
 #include <betweeness_analysis.hpp>
-#include <barabasi_albert.hpp>
-#include <util.hpp>
-#include <small_world_model.hpp>
+#include <clustering.hpp>
 #include <random_model.hpp>
-#include <average_path.cpp>
+#include <small_world_model.hpp>
+#include <util.hpp>
 
 using namespace boost;
 using namespace project_1;
@@ -27,10 +27,6 @@ void small_world_example();
 void random_model_example();
 
 int main() {
-  // betweeness_analysis();
-  // barabasi_albert_example();
-  // small_world_example();
-  //random_model_example();
   return 0;
 }
 
