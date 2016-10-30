@@ -1,13 +1,7 @@
-#include <boost/lambda/lambda.hpp>
 #include <iostream>                  // for std::cout
 #include <utility>                   // for std::pair
-#include <algorithm>                 // for std::for_each
-#include <vector>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <util.hpp>
 
 namespace project_1 {
 	using namespace boost;
@@ -18,11 +12,10 @@ namespace project_1 {
 	// pairs of vertex in a graph
 	//
 	//  The shortest paths of a node is found using a BFS
-
 	template <class Graph>
-	double averagePath(const Graph& g) {
+	double average_path(const Graph& g) {
 		//Typedefs
-		typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+		vertex_descriptor<Graph> u;
 		typedef typename graph_traits<Graph>::vertex_iterator vi;
 		typedef typename property_map<Graph, vertex_index_t>::type IndexMap;
 		typedef typename graph_traits<Graph>::vertices_size_type vertexSize;
@@ -37,9 +30,10 @@ namespace project_1 {
 
 		//Iterate through vertices
 		for (vp = vertices(g); vp.first != vp.second; ++vp.first) {
-			Vertex v = *vp.first;
+			u = *vp.first;
 
-			vertexSize d = new vertexSize[num_vertices(g)];
+			vertexSize *d;
+			d = new vertexSize[num_vertices(g)];
 
 			std::fill_n(d, num_vertices(g), 0);
 
@@ -55,7 +49,7 @@ namespace project_1 {
 				vertexSum += *it;
 			totalSum += vertexSum;
 
-			std::cout << "Sum of shortest paths of vertex: " << id[v] << " is -> " << vertexSum << std::endl;
+			std::cout << "Sum of shortest paths of vertex: " << id[u] << " is -> " << vertexSum << std::endl;
 
 			free(d);
 		}
@@ -66,7 +60,3 @@ namespace project_1 {
 		return avgPathLength;
 	}
 };
-
-int main(){
-	return 0;
-}
