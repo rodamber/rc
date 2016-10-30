@@ -99,7 +99,7 @@ namespace project_1 { namespace util {
         throw std::runtime_error("xs must have the same size as ys");
       }
       for (size_t i = 0; i < xs.size(); ++i) {
-        os << std::setprecision(2) << xs[i] << "," << ys[i] << "\n";
+        os << std::setprecision(2) << xs[i] << "\t" << ys[i] << "\n";
       }
       os << std::endl;
     }

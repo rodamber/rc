@@ -35,7 +35,7 @@ void betweeness_analysis() {
   using Graph = adjacency_list<vecS, vecS, undirectedS>;
 
   const size_t num_graphs = 20;
-  const size_t num_nodes = 10000;
+  const size_t num_nodes = 1000;
 
   std::clock_t c_start_1 = std::clock();
 
