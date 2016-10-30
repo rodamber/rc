@@ -1,9 +1,8 @@
-#include <iostream>
-
 #include <boost/graph/adjacency_list.hpp>
 
 #include <chrono>
 #include <iomanip>
+#include <iostream>
 
 #include <clustering.hpp>
 #include <betweeness.hpp>
@@ -11,7 +10,8 @@
 #include <barabasi_albert.hpp>
 #include <util.hpp>
 #include <small_world_model.hpp>
-
+#include <random_model.hpp>
+#include <average_path.cpp>
 
 using namespace boost;
 using namespace project_1;
@@ -24,9 +24,14 @@ using Graph = adjacency_list<vecS, vecS, undirectedS>;
 
 void barabasi_albert_example(int);
 void small_world_example();
+void random_model_example();
 
 int main() {
-  betweeness_analysis();
+  // betweeness_analysis();
+  // barabasi_albert_example();
+  // small_world_example();
+  //random_model_example();
+  return 0;
 }
 
 void barabasi_albert_example(int V = 1000) {
@@ -52,12 +57,24 @@ void barabasi_albert_example(int V = 1000) {
 }
 
 void small_world_example() {
-  int V = 0, K = 0, P = 0;
+  int V = 0, K = 0; 
+  double P = 0;
 
   cout << "V = "; cin >> V;
   cout << "K = "; cin >> K;
   cout << "P = "; cin >> P; cout << endl;
 
   Graph g = watz_strogatz_small_word<Graph>(V, K, P);
+  util::print::print_graph_in_adjacency_list_format(g);
+}
+
+void random_model_example() {
+  int V = 0;
+  double P = 0;
+
+  cout << "V = "; cin >> V;
+  cout << "P = "; cin >> P; cout << endl;
+
+  Graph g = random_model<Graph>(V, P);
   util::print::print_graph_in_adjacency_list_format(g);
 }
