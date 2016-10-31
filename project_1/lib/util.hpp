@@ -31,6 +31,9 @@ namespace project_1 { namespace util {
     using edge_iterator = typename graph_traits<Graph>::edge_iterator;
 
     template<class Graph>
+    using vertex_size = typename graph_traits<Graph>::vertex_size_type;
+
+    template<class Graph>
     inline bool directed() {
       using Cat = typename graph_traits<Graph>::directed_category;
       return boost::detail::is_directed(Cat());
