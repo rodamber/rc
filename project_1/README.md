@@ -1,5 +1,4 @@
-# Complex Networks Report
-## Project 1
+# Complex Networks Report - Project 1
 
 Professor: Francisco João Duarte Cordeiro Correia dos Santos
 
@@ -35,10 +34,13 @@ applying the metrics and models we implemented.
 
 ### Betweeness centrality
 We made an analysis of the *betweeness centrality* of vertices on random and
-scale-free graphs. For that we created 20 graphs with 1000 vertices for each
-model and measured the average *betweeness centrality* for each degree averaged
-over all graphs. For the random graphs, the probabilities used were 0, 0.05,
-0.1, and so on, upto 1.
+scale-free graphs.
+For that we created 20 graphs with 1000 vertices for each model and plotted
+average *betweeness centrality* in function of the degree, averaged over all
+20 graphs.
+For the random graphs, the probabilities used were 0, 0.05, 0.1, and so
+on, upto 1.
+
 
 ### Clustering coefficient
 
