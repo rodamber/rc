@@ -104,7 +104,13 @@ namespace project_1 { namespace util {
       for (size_t i = 0; i < xs.size(); ++i) {
         os << std::setprecision(2) << xs[i] << "\t" << ys[i] << "\n";
       }
-      os << std::endl;
+    }
+
+    template<class X, class Y>
+    void to_csv(const std::vector<std::pair<X,Y>>& points, std::ostream& os) {
+      for (const auto& point : points) {
+        os << std::setprecision(10) << point.first << "\t" << point.second << "\n";
+      }
     }
 
 

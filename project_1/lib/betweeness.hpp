@@ -28,12 +28,11 @@ namespace project_1 {
 
   template <class Graph>
   void betweeness_normalize(const Graph& g, std::vector<double>& xs) {
-    const auto V = num_vertices(g);
-    const double factor = directed<Graph>() ? 1 : 2;
+    const double min_score = *std::min_element(xs.begin(), xs.end());
+    const double max_score = *std::max_element(xs.begin(), xs.end());
 
     for (auto &x: xs) {
-      x /= (V - 1) * (V - 2);
-      x *= factor;
+      x = (x - min_score) / (max_score - min_score);
     }
   }
 

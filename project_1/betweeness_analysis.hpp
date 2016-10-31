@@ -2,6 +2,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include "boost/tuple/tuple.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -10,10 +11,12 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <utility>
 
 #include <all_vertex_degree.hpp>
 #include <betweeness.hpp>
 #include <barabasi_albert.hpp>
+#include <random.hpp>
 
 using namespace boost;
 using namespace project_1;
@@ -31,115 +34,135 @@ std::vector<Graph> make_graphs_barabasi_albert(int num_graphs, int num_nodes) {
   return graphs;
 }
 
-void betweeness_analysis() {
+template<class Graph>
+std::vector<Graph> make_graphs_random(int num_graphs, int num_nodes) {
+  std::vector<Graph> graphs;
+  double p = 0.0;
+
+  for (int i = 0; i < num_graphs; ++i) {
+    p += 0.05;
+    Graph g = random_model<Graph>(num_nodes, p);
+    graphs.push_back(g);
+  }
+
+  return graphs;
+}
+
+
+template<class Graph>
+size_t all_graphs_max_degree(const std::vector<Graph>& graphs) {
+  size_t max = 0;
+
+  for (const auto& graph : graphs) {
+    const std::vector<size_t> degree = all_vertex_degree(graph);
+    max = std::max(max, *std::max_element(degree.begin(), degree.end()));
+  }
+
+  return max;
+}
+
+// template<class Graph>
+// std::pair<std::vector<double>, std::vector<double>>
+// analyze_buckets(const std::vector<Graph>& graphs) {
+
+//   const size_t max_degree = all_graphs_max_degree<>(graphs);
+//   const size_t bucket_size = 5;
+//   const size_t num_buckets = max_degree / bucket_size + 1;
+
+//   // Here we store the sums of scores for nodes with degrees in a certain
+//   // interval. For each node, if its degree is k, then we sum its score to the
+//   // value in the bucket of index floor(k/y).
+//   std::vector<double> bucket(num_buckets, 0.0);
+//   // Here we store how many node scores we added to each bucket. We will use
+//   // this to take the average of each bucket.
+//   std::vector<size_t> bucket_count(num_buckets, 0);
+
+//   for (const auto& graph : graphs) {
+//     // This is the map that maps nodes to their indices.
+//     const auto index = get(vertex_index, graph);
+//     // We store the degrees of each node. For the node of index i its degree
+//     // will be degree[i].
+//     const std::vector<size_t> degree = all_vertex_degree(graph);
+//     // We compute the normalized betweeness centrality scores for each node...
+//     const std::vector<double> score = betweeness(graph);
+//     // And then we place them in their buckets.
+//     BGL_FORALL_VERTICES_T(v, graph, Graph) {
+//       const size_t bucket_index = degree.at(index[v]) / bucket_size;
+//       bucket.at(bucket_index) += score.at(index[v]);
+//       ++bucket_count.at(bucket_index);
+//     }
+//   }
+
+//   // We compute the averages for each bucket (the y axis)
+//   std::vector<double> bucket_average;
+//   std::transform(bucket.begin(), bucket.end(), bucket_count.begin(),
+//                  std::back_inserter(bucket_average),
+//                  [](double sum, size_t count) { return sum / std::max(count, (size_t)1); });
+//   // Then we calculate the start of each bucket (the x axis)
+//   int k = -1 * (int)bucket_size;
+//   std::vector<double> degree(num_buckets);
+//   std::generate(degree.begin(), degree.end(),
+//                 [&k]() { return (double)(k += bucket_size); });
+
+//   // return {degree, bucket_average};
+//   return std::make_pair<>(degree, bucket_average);
+// }
+
+template<class Graph>
+std::vector<std::pair<double, double>> analyze(const std::vector<Graph>& graphs) {
+  std::vector<std::pair<double,double>> points;
+
+  for (const auto& graph : graphs) {
+    const auto index = get(vertex_index, graph);
+    const auto score = betweeness(graph);
+    const auto degree = all_vertex_degree(graph);
+
+    BGL_FORALL_VERTICES_T(v, graph, Graph) {
+      points.push_back({degree.at(index[v]), score.at(index[v])});
+    }
+  }
+
+  std::sort(points.begin(), points.end(),
+            [](std::pair<double,double> p1, std::pair<double,double> p2) {
+              return p1.first < p2.first;
+            });
+  return points;
+}
+
+
+void analysis(size_t num_graphs, size_t num_nodes, std::ostream& os) {
   using Graph = adjacency_list<vecS, vecS, undirectedS>;
 
-  const size_t num_graphs = 20;
-  const size_t num_nodes = 1000;
-
-  std::clock_t c_start_1 = std::clock();
+  // Start recording.
+  std::clock_t c_start = std::clock();
 
   std::cout << "Making graphs..." << std::flush;
-  auto graphs = make_graphs_barabasi_albert<Graph>(num_graphs, num_nodes);
+  auto graphs = make_graphs_random<Graph>(num_graphs, num_nodes);
   std::cout << "done." << std::endl;
 
-  std::clock_t c_end_1 = std::clock();
+  // Stop recording.
+  std::clock_t c_end = std::clock();
   std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
-            << (c_end_1 - c_start_1) / CLOCKS_PER_SEC << " s" << std::endl;
-  std::clock_t c_start_2 = std::clock();
+            << (c_end - c_start) / CLOCKS_PER_SEC << " s" << std::endl;
 
-  // Here we will store the information of which degrees we have seen already,
-  // i.e., the position k of the vector will be true iff there is node with
-  // degree k in one of the graphs tested.
-  std::vector<bool> degrees_found(num_nodes, false);
+  // Start recording.
+  c_start = std::clock();
 
-  std::cout << "Calculating averages..." << std::flush;
-  // Here we will store the sums of the average betweeness centrality scores per
-  // degree over all the tested graphs.
-  std::vector<double> averages_sums(num_nodes, 0.0);
+  std::cout << "Analyzing..." << std::flush;
 
-  for (auto &g : graphs) {
-    // Here we have the degrees for each node. Position i has the degree of
-    // node with index i.
-    const std::vector<size_t> degrees = all_vertex_degree<Graph>(g);
+  std::vector<double> xx, yy;
+  // tie(xx, yy) = analyze<>(graphs);
+  auto points = analyze<>(graphs);
 
-    // Update the degrees found until now.
-    for (auto d: degrees) {
-      degrees_found.at(d) = true;
-    }
-
-    // Here we have the betweeness centrality scores for each node. At position
-    // i we have the score for node with index i.
-    std::vector<double> scores = betweeness(g);
-
-    // We store the sums of the betweeness centrality scores in a vector indexed
-    // by the degrees. So at position k we have the sum of the scores of nodes
-    // with degree k.
-    std::vector<double> bs(num_nodes, 0.0);
-
-    const auto index = get(vertex_index, g);
-    BGL_FORALL_VERTICES_T(v, g, Graph) {
-      bs.at(out_degree(v, g)) += scores.at(index[v]);
-    }
-
-    // Then we get the averages of the scores per degree.
-    for (size_t k = 0; k < bs.size(); ++k) {
-      // How many nodes have degree k?
-      const double n = std::count(degrees.begin(), degrees.end(), k);
-
-      // std::cout << "k = " << k << std::endl;
-      // std::cout << "n = " << n << std::endl;
-      // std::cout << "before: bs.at("<<k<<") = " << bs.at(k) << std::endl;
-
-      // And now we have the average betweeness centrality per degree.
-      bs.at(k) /= std::max(n, 1.0);
-
-      // std::cout << "after: bs.at("<<k<<") = " << bs.at(k) << std::endl;
-    }
-
-    for (size_t i = 0; i < averages_sums.size(); ++i) {
-      averages_sums[i] += bs[i];
-    }
-  }
-
-  std::vector<double> averages;
-  std::transform(averages_sums.begin(), averages_sums.end(),
-                 std::back_inserter(averages),
-                 [](double s) { return s / (double) num_graphs; });
-
+  // Stop recording.
   std::cout << "done." << std::endl;
-  std::clock_t c_end_2 = std::clock();
+  c_end = std::clock();
   std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
-            << (c_end_2 - c_start_2) / CLOCKS_PER_SEC << " s" << std::endl;
+            << (c_end - c_start) / CLOCKS_PER_SEC << " s" << std::endl;
 
-  std::vector<size_t> degrees(num_nodes, 0);
-  for (size_t i = 0; i < degrees.size(); ++i) {
-    degrees.at(i) = i;
-  }
+  std::cout << "Exporting..." << std::flush;
+  // util::print::to_csv(xx, yy, os);
+  util::print::to_csv(points, os);
+  std::cout << "done." << std::endl;
 
-  // Now we will remove unwanted data. We don't want data about degrees that we
-  // did not find, i.e., if none of the tested graphs had nodes with degree k,
-  // then we don't want averages(k) to be 0.
-  degrees.erase(std::remove_if(degrees.begin(), degrees.end(),
-                               [&](size_t k) { return !degrees_found[k]; }),
-                degrees.end());
-
-  // This is a little tricky because the vectors size is varying as we remove
-  // elements, but the idea continues to be to eliminate the data about degrees
-  // that we did not find.
-  auto it = averages.begin();
-  for (size_t k = 0, i = 0; i < averages.size(); ++k) {
-    if(!degrees_found[k]) {
-      averages.erase(it + i);
-    } else {
-      ++i;
-    }
-  }
-
-  // Now all we have to do is to export the data.
-  std::ostringstream oss;
-  oss << "betweeness-barabasi-" << num_graphs << "-" << num_nodes << ".csv";
-  std::ofstream out_file(oss.str());
-  util::print::to_csv(degrees, averages, out_file);
-  util::print::to_csv(degrees, averages, std::cout);
 }
