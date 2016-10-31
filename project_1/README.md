@@ -5,6 +5,7 @@ Professor: Francisco João Duarte Cordeiro Correia dos Santos
 Group: 10
 
 Students:
+
   - Gonçalo Cardoso Gaspar (58803)
   - João Nuno Estevão Fidalgo Ferreira Alves (79155)
   - Rodrigo André Moreira Bernardo (78942)
@@ -12,9 +13,9 @@ Students:
 ## Abstract
 
 ## Objectives
-Learn to use a library for creation, manipulation and analysis of graphs. Learn
-and implement metrics and models of graphs. Analyze graphs by some of the
-implemented metrics.
+Learn to use a library for creation, manipulation and analysis of graphs.
+Learn and implement metrics and models of graphs.
+Analyze graphs by some of the implemented metrics.
 
 ## What we did
 To reach our goals we proposed to create a library of algorithms over graphs on
@@ -36,9 +37,9 @@ applying the metrics and models we implemented.
 We made an analysis of the *betweeness centrality* of vertices on random and
 scale-free graphs.
 For that we created 20 graphs with 1000 vertices for each model and plotted
-average *betweeness centrality* in function of the degree, averaged over all
+the average *betweeness centrality* in function of the degree, averaged over all
 20 graphs.
-For the random graphs, the probabilities used were 0, 0.05, 0.1, and so
+For the random graphs, the probabilities used were 0, 0.05, 0.10, and so
 on, upto 1.
 
 

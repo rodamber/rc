@@ -2,4 +2,5 @@
 Repository for the Complex Networks 2016/2017 course at IST, University of Lisbon.
 
 ## About
-The report can be found at ./project_1/README.md
+The report can be found at ./project_1/README.md in markdown format or at
+./project_1/README.pdf in pdf format.
