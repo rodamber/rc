@@ -1,43 +1,53 @@
 # Abstract
 
-Regarding the important subject of graph compression, we make an ample analysis
-on it's cornerstones, considering the importance and value on the correlation
-between a graph's ordering and it's subsequent compression. We also take on this
-issue to analyze how one of the most used coordinate-free ordination methods,
-Layered Label Propagation, uses this characteristics to improve over graph
-compression and also, even though webgraphs and social networks have different
-inherent characteristics, how can a webgraph compression algorithm be adapted to
-process a social network.
+Regarding the subject of graph compression, we make an analysis on it's
+cornerstones, considering the importance and value on the correlation between a
+graph's ordering and it's subsequent compression. We take on this issue by
+analyzing how Layered Label Propagation (LLP), a coordinate-free ordering
+method, uses intrisinc heuristics to produce an ordering to improve over current
+graph compression methods.
+
+*?* and also, even though webgraphs and social networks have different inherent
+characteristics, how can a webgraph compression algorithm be adapted to process
+a social network.
 
 # Introduction
 
 Modeling real-world relations through graphs is nowadays a very widely used way
-to gather information between constituents of a given network. In such a way, a
-lot of information can be mined from this given structure, ex: detecting node
-relationships, like friendship relations in social networks, finding communities
-between users, and other statistical information obtained by graph metrics. Now,
-this translates into a real implementation problem when the graph itself has
-millions, if not billions, constituents since many of the data mining algorithms
-often assume that the graph is stored in main memory. This can be viewed when
-regarding for example, a web graph, that describes the directed links between
-pages of the all the addressable World Wide Web, and also when regarding a
-social network, using as an example, all the relationships that exists between
-all of Facebook users, so one can imagine the amount of memory that it would be
-needed to represent this kind of network.
+to gather information between constituents of a given network. 
+In such a way, a lot of information can be mined from this given structure, eg.,
+detecting node relationships, like friendship relations in social networks,
+finding communities between users, and other statistical information obtained by
+graph metrics.
+This translates into a real implementation problem when the graph has millions
+or billions of nodes, since much of the standard graph mining algorithms assume
+that the graph is stored in main memory.
+This can be witnessed, for example, in the web graph, which describes the
+directed links between pages of the addressable World Wide Web, or when
+regarding commonly used social networks, like Facebook or Twitter.
 
+<!-- Bullshit Paragraph -->
 So, we can agree that effective techniques to store and access large graphs are
 needed in order to be possible to realize and analyze, not only web graphs, but
 also social networks. We will be addressing how this techniques can be
 implemented, why they are effective, and also an optimization variant that
 relies on a specific node ordering technique called Layered Label Propagation.
 
+
+<!-- I guess what we need to say here is that we're looking for intrisinc -->
+<!-- characteristics instead of extrinsic ones. -->
+<!-- Also, that the objective is a compressed data structure for immutable graphs -->
+<!-- that provides fast edge access and does not need to be decompressed. -->
+
 Taking this in consideration, it is vital to have an accurate understanding of
 the characteristics and inner structure of such networks, so one can improve the
-compression performance on this networks. What is desired is to be possible to
-develop structures that propitiate a very fast amortized random access to an
-edge. This idea has already been explored with success with application to web
-graphs, showing that is is possible to use 3bits per link. To achieve this kind
-of ratio, it is needed to make good use of properties of two properties:
+compression performance on this networks. 
+What is desired is to be possible to develop structures that propitiate a very
+fast amortized random access to an edge.
+This idea has already been explored with success with application to web graphs,
+showing that is is possible to use 3bits per link.
+To achieve this kind of ratio, it is needed to make good use of properties of
+two properties:
 
 - *similarity*: nodes that are close to each other in the order tend to have
 similar sets of neighbours;
@@ -45,6 +55,7 @@ similar sets of neighbours;
 - *locality*: most links are between nodes that are close to each other in the
 order.
 
+<!-- Bullshit Paragraph -->
 This way, we can develop a model that facilitates efficient adjacency queries
 and we can, for example: exploit lexicographic locality: ordering URLs naturally
 (Web Graphs), or ordering Facebook users through the amount of shared friendship
@@ -54,6 +65,7 @@ here, we can develop different ordering heuristics based on the provenance of
 the information that allowed us the given ordering, and the type on network
 itself:
 
+<!-- What were they thinking? Probably forgot about this here. -->
 - *intrinsic heuristics*: nodes that are close to each other in the order tend
 to have similar sets of neighbours;
 
@@ -73,12 +85,14 @@ required to store this graph. In this analyze we shall assume that a graph $G$
 with $n$ nodes has $V_G = n$, so a node order is actually a permutation $\pi : n
 \rightarrow n$.
 
+<!-- is this english? -->
 The graph-compression scheme, used to obtain the results present in this report,
 is BV compression-scheme used within the WebGraph framework, used for handling
 large web-like graphs, but in social networks there are no natural ordering,
 since node names in this genre of network, have no prefix or it has no meaning,
 lexicographical ordering is no longer viable.
 
+<!-- incomplete -->
 It is quite relevant that this algorithm is coordinate-free,
 
 # Ordering Considerations
