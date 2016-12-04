@@ -13,14 +13,15 @@ a social network.
 
 # Introduction
 
-Modeling real-world relations through graphs is nowadays a very widely used way
-to gather information between constituents of a given network. 
-In such a way, a lot of information can be mined from this given structure, eg.,
+Modeling real-world relations through graphs is a very widely used way to gather
+information between constituents of a given network.
+In such a way, a lot of information can be mined from this given structure, e.g.,
 detecting node relationships, like friendship relations in social networks,
 finding communities between users, and other statistical information obtained by
 graph metrics.
-This translates into a real implementation problem when the graph has millions
-or billions of nodes, since much of the standard graph mining algorithms assume
+
+This becomes a real implementation problem when the graph has millions or
+billions of nodes, since much of the standard graph mining algorithms assume
 that the graph is stored in main memory.
 This can be witnessed, for example, in the web graph, which describes the
 directed links between pages of the addressable World Wide Web, or when
@@ -42,18 +43,25 @@ relies on a specific node ordering technique called Layered Label Propagation.
 Taking this in consideration, it is vital to have an accurate understanding of
 the characteristics and inner structure of such networks, so one can improve the
 compression performance on this networks. 
+
 What is desired is to be possible to develop structures that propitiate a very
 fast amortized random access to an edge.
+
 This idea has already been explored with success with application to web graphs,
-showing that is is possible to use 3bits per link.
-To achieve this kind of ratio, it is needed to make good use of properties of
-two properties:
+showing that is possible to use 3 bits/link.
+To achieve this kind of ratio, it is needed to make good use of two properties:
 
 - *similarity*: nodes that are close to each other in the order tend to have
 similar sets of neighbours;
 
 - *locality*: most links are between nodes that are close to each other in the
 order.
+
+<!-- also tell that because most algorithms exploit these properties, they become -->
+<!-- sensible to the way nodes are ordered -->
+
+<!-- extrinsic properties are characteristic of each kind of graph, while intrinsic -->
+<!-- properties can be generally applied. -->
 
 <!-- Bullshit Paragraph -->
 This way, we can develop a model that facilitates efficient adjacency queries
