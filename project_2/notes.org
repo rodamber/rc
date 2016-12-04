@@ -1,0 +1,32 @@
+* Key points
+- [ ] Approaches the ordering problem as a clustering problem. It's crucial for the
+  ordering to recover the "original clustering structure".
+- [ ] The graphs are immutable.
+- [ ] Very fast amortised random access to an edge.
+- [ ] Can't decompress the graph.
+- [ ] Compression to place large graphs in *main memory*
+- [ ] Applies to graphs of all kinds by using intrinsic heuristics to find a good
+   node ordering.
+- [ ] Intrinsic vs extrinsic heuristics.
+- [ ] Problem is NP-Hard.
+- [ ] LLP is coordinate-free.
+- [ ] LLP is parameter-free.
+- [ ] LLP was combined with BV.
+
+* LLP
+** 1. What is it?
+A coordinate-free ordering algorithm (not a compression algorithm).
+** 2. What does it (try to) accomplish?
+Exploit graph intrinsic characteristics to obtain an ordering of its nodes that
+allows the best possible compression ratio for immutable graphs while providing
+very fast amortised random access to an edge.
+** 3. Why do we need it?
+Because better compression schemes allow for larger graphs to live in main
+memory. Most graph mining
+** 4. How does it compare to other approaches to the same problem?
+** 5. How does it work?
+
+* Doubts
+- [ ] How can we compress the graph if it can't be placed in main memory in the
+  first place?
+- [ ] Whats the complexity of edge access?
