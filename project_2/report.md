@@ -1,86 +1,64 @@
 # Abstract
 
-Regarding the subject of graph compression, we make an analysis on it's
-cornerstones, considering the importance and value on the correlation between a
-graph's ordering and it's subsequent compression. We take on this issue by
-analyzing how Layered Label Propagation (LLP), a coordinate-free ordering
-method, uses intrisinc heuristics to produce an ordering to improve over current
-graph compression methods.
-
-*?* and also, even though webgraphs and social networks have different inherent
-characteristics, how can a webgraph compression algorithm be adapted to process
-a social network.
+We present a summary of how Layered Label Propagation (LLP), a highly scalable,
+coordinate-free, graph reordering algorithm, uses community finding techniques
+to permute very large (immutable) graphs (possibly billions of nodes), with
+applications to graph compression.
 
 # Introduction
 
-Modeling real-world relations through graphs is a very widely used way to gather
-information between constituents of a given network.
-In such a way, a lot of information can be mined from this given structure, e.g.,
-detecting node relationships, like friendship relations in social networks,
-finding communities between users, and other statistical information obtained by
-graph metrics.
+Real-world networks are rich with information that can be gathered through graph
+mining techniques. Cases of study are friendship relations or community finding
+in social networks, cooperation networks in scientific co-authorships or
+protein-protein interactions.
 
-This becomes a real implementation problem when the graph has millions or
-billions of nodes, since much of the standard graph mining algorithms assume
-that the graph is stored in main memory.
-This can be witnessed, for example, in the web graph, which describes the
-directed links between pages of the addressable World Wide Web, or when
-regarding commonly used social networks, like Facebook or Twitter.
+Obtaining this kind of informations becomes a real implementation problem when
+the subjacent graph has millions or billions of nodes, since most of the
+standard graph mining algorithms assume that the graph is stored in main memory,
+which may not be the case. This can be witnessed, for example, in the web graph
+which describes the directed links between pages of the addressable World Wide
+Web, or when regarding the most used social networks, like Facebook or Twitter.
 
-<!-- Bullshit Paragraph -->
-So, we can agree that effective techniques to store and access large graphs are
-needed in order to be possible to realize and analyze, not only web graphs, but
-also social networks. We will be addressing how this techniques can be
-implemented, why they are effective, and also an optimization variant that
-relies on a specific node ordering technique called Layered Label Propagation.
+Therefore, techniques for efficient storage and fast access/traversal of large
+graphs are needed in order to become feasible to analyze not only web graphs,
+but large graphs of any kind.
+
+While several approaches have been taken regarding graph compression, we chose
+to analyze how LLP uses community finding techniques to reorder the nodes of a
+graph in order to exploit its inner structure and obtain, in combination with
+the Boldi and Vigna (BV) compression method (which we do not explore here), a
+better compression than current alternatives.
+
+# Problem Definition
+
+# Layered Label Propagation
+
+LLP was first mentioned in *FIXME*. The objective was to find effective general
+(i.e. suitable to several types of graphs) techniques to store and access
+graphs. Moreover, the resulting compressed data structure must provide fast
+amortised random access to an edge. The authors address this problem by trying
+to apply *intrinsic* heuristics (i.e., ones that depend only on the inner
+structure of the network), in contrast to *extrinsic* heuristics (which are
+features of each specific kind of network). For instance, in a web graph one can
+find a permutation of the nodes in the URL-based lexicographic order which, in
+practice, can be shown to produce impressive compression ratios. However, this
+ordering isn't applicable to all sorts of networks.
+
+<!-- Maybe stretches the idea a little bit too far... -->
+Nonetheless, the ordering of the nodes becomes important once we consider that,
+in order to achieve good compression performances, compression algorithms
+usually exploit two properties:
+(1) *similarity*: nodes tend to have resembling sets of neighbours if they're
+close to each other in the ordering;
+(2) *locality*: most of the edges are shared between nodes close to each other
+in the ordering.
+Furthermore, most current algorithms are sensitive to the initial ordering of
+the graphs, generating different compression ratios depending on how the dataset
+is originally presented. LLP, on the other hand, is *coordinate-free*, i.e.,
+attains similar results independently of the original ordering.
 
 
-<!-- I guess what we need to say here is that we're looking for intrisinc -->
-<!-- characteristics instead of extrinsic ones. -->
-<!-- Also, that the objective is a compressed data structure for immutable graphs -->
-<!-- that provides fast edge access and does not need to be decompressed. -->
-
-Taking this in consideration, it is vital to have an accurate understanding of
-the characteristics and inner structure of such networks, so one can improve the
-compression performance on this networks. 
-
-What is desired is to be possible to develop structures that propitiate a very
-fast amortized random access to an edge.
-
-This idea has already been explored with success with application to web graphs,
-showing that is possible to use 3 bits/link.
-To achieve this kind of ratio, it is needed to make good use of two properties:
-
-- *similarity*: nodes that are close to each other in the order tend to have
-similar sets of neighbours;
-
-- *locality*: most links are between nodes that are close to each other in the
-order.
-
-<!-- also tell that because most algorithms exploit these properties, they become -->
-<!-- sensible to the way nodes are ordered -->
-
-<!-- extrinsic properties are characteristic of each kind of graph, while intrinsic -->
-<!-- properties can be generally applied. -->
-
-<!-- Bullshit Paragraph -->
-This way, we can develop a model that facilitates efficient adjacency queries
-and we can, for example: exploit lexicographic locality: ordering URLs naturally
-(Web Graphs), or ordering Facebook users through the amount of shared friendship
-relationships (social networks). This properties show the importance of node
-ordering for compressing algorithms achieving better compression ratios. From
-here, we can develop different ordering heuristics based on the provenance of
-the information that allowed us the given ordering, and the type on network
-itself:
-
-<!-- What were they thinking? Probably forgot about this here. -->
-- *intrinsic heuristics*: nodes that are close to each other in the order tend
-to have similar sets of neighbours;
-
-- *extrinsic heuristics*: most links are between nodes that are close to each
-other in the order.
-
-# Problem
+# Problem Definition
 
 The general problem of a graph-compression algorithm can be defined as a
 function which receives a graph $G$ as input and stores it in a compressed data

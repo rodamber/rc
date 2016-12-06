@@ -1,24 +1,35 @@
 * Key points
 - [ ] Approaches the ordering problem as a clustering problem. It's crucial for the
   ordering to recover the "original clustering structure".
-- [ ] The graphs are immutable.
-- [ ] Very fast amortised random access to an edge.
-- [ ] Can't decompress the graph.
-- [ ] Compression to place large graphs in *main memory*
-- [ ] Applies to graphs of all kinds by using intrinsic heuristics to find a good
+- [X] The graphs are immutable.
+- [X] Very fast amortised random access to an edge.
+  - [X] Can't decompress the graph.
+- [X] Compression to place large graphs in *main memory*
+- [X] Applies to graphs of all kinds by using intrinsic heuristics to find a good
    node ordering.
-- [ ] Intrinsic vs extrinsic heuristics.
-  - [ ] By definiiton, extrinsic properties are features of each specific kind of network, while
+- [X] Intrinsic vs extrinsic heuristics.
+  - [X] By definiiton, extrinsic properties are features of each specific kind of network, while
     intrinsic properties are generally applicable.
-- [ ] Why is the ordering of the nodes important?
-  - [ ] Algorithms become sensitive to the way nodes are ordered because they rely
+  - [X] If, for example, we're talking about a web graph, we can assume to have
+    an extrinsic URL-based ordering, but this may not apply to other kinds of
+    graphs.
+- [X] Why is the ordering of the nodes important?
+  - [X] Algorithms become sensitive to the way nodes are ordered because they rely
     on the *similarity* and *locality* properties.
-    - [ ] What are they?
+    - [X] What are they?
+  - [X] Algorithms in related works produce different results depending on the
+    initial ordering of the nodes and, indeed, produce bad compression results.
 - [ ] Problem is NP-Hard. Why?
-- [ ] LLP is coordinate-free.
-- [ ] LLP is parameter-free.
+- [X] LLP is coordinate-free.
+  - [X] Achieves similar compression performances independently of the initial
+    ordering.
+- [ ] LLP is parameter-free (not really: depends on the number of resolution
+  parameters and on the stopping criterion).
 - [ ] LLP was combined with BV.
-- [ ] Highly parallel.
+- [ ] Highly scalable. Why?
+  - "most of the time is spent on sampling values of gamma to produce base
+    clusterings, and this operation can be performed for each gamma in a fully
+    parallel way."
 
 * LLP
 ** 1. What is it?
@@ -31,7 +42,39 @@ in main memory and provide very fast amortised random access to their edges.
 Because better compression schemes allow for larger graphs to fit in main
 memory. Most graph mining
 ** 4. How does it compare to other approaches to the same problem?
+It's coordinate-free, parameter-free and performs better than any other existing
+approach for their purpose.
 ** 5. How does it work?
+lambda of x = label of node x
+gamma = resolution parameter
+
+It's interesting to understand that the values of gamma_k are taken uniformly at
+random from the set {0} U {2^-i, i=0,...,k} and, therefore, we should expect
+them to decrease with each iteration and so, the algorithm highlights a "coarse
+structure with fewer, bigger and sparser clusters" as it progresses.
+
+This implies that the probability of two nodes being reordered in relation to
+each other diminuishes as the algorithm evolves. In some sense this algorithm is
+similar to the simmulated annealing.
+
+*APM* : Graphs x [0,1] -> {{Nodes}}
+The APM algorithm takes a graph and a resolution parameter and returns a
+clustering of the input graph.
+
+*LLP* : Graph -> (Nodes -> {0, 1, ..., V_G})
+LLP takes a graph as input and returns an ordering of the nodes.
+(It is independent of the initial ordering (== it's coordinate-free))
+
+The algorithm precomputes the labelling functions for each gamma
+
+** 6. Why does it work?
+The partition induced by the ordering minimizes host transition and Variation of
+Information ... and because of that the algorithm is good at recovering the
+community structure of the network. This implies that nodes with high
+probability of being connected (e.g., with locality), appear close to each other
+in the ordering. The advantage of this is given empirically (by showing that
+algorithms that minimize HT and VI perform better <-- this is the definition of
+empiric...).
 
 * Doubts
 - [ ] How can we compress the graph if it can't be placed in main memory in the
