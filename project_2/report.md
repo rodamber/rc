@@ -40,9 +40,7 @@ graph in order to exploit its inner structure and obtain, in combination with
 the Boldi and Vigna (BV) compression method (which we do not explore here),
 superior compression products than current alternatives.
 
-<!-- *FIXME* Put the reference to the llp paper. -->
-
-LLP was first mentioned in *FIXME*. The objective was to find effective general
+LLP was first mentioned in [BRSV10]. The objective was to find effective general
 techniques to store and access graphs. Moreover, the resulting compressed data
 structure must provide fast amortised random access to an edge. The authors
 address this problem by applying *intrinsic* heuristics (i.e., ones that depend
@@ -94,10 +92,8 @@ no *a priori* information is needed regarding the structure of the network, they
 are also efficient, requiring only a few passes through the network and are
 linear in the number of edges.
 
-<!-- *FIXME* Put the reference to the original label propagation paper. -->
-
  What the authors of LLP call the (*standard*) label propagation algorithm is
-described in *FIXME* and works as follows: at the beginning each node is
+described in [RAK07] and works as follows: at the beginning each node is
 assigned a unique label. At each iteration, in random order each node takes up
 the label that most of its neighbours have, with ties resolved uniformly
 randomly. As the labels propagate through the graph, densely connected groups of
@@ -110,10 +106,8 @@ one giant cluster containing the bulk of the nodes when applied to social
 networks, which is due to the very nature of the topology of this kind of
 networks.
 
-<!-- *FIXME* Put the reference to the original APM paper. -->
-
 One interesting variant of label propagation is the Absolute Pott Model (APM)
-*FIXME*. This algorithm addresses the resolution limit problem in community
+[RN10]. This algorithm addresses the resolution limit problem in community
 detection by introducing nonlocal weight discount parameter when considering
 weight preferences for assigning node labels. In standard label propagation, the
 label $\lambda_i$ assigned to a node $x$, was the one that maximized $k_i$,
@@ -202,3 +196,16 @@ $$I(\mathcal{H}_{|\pi},\mathcal{H})=\mathcal{H}$$ $\hspace{3cm}implying$
 $$VI(\mathcal{H}_{|\pi},\mathcal{H})=H(\mathcal{H}_{|\pi})-H(\mathcal{H})$$
 Since $$ \leq VI(\mathcal{H}_{|\pi},\mathcal{H})\leq VI(\mathcal{H}_{|\pi} +
 \mathcal{H}) $$
+
+# References
+
+[BRSV10] P. Boldi, M. Rosa, M. Santini and S. Vigna. Layered Label Propagation:
+A MultiResolution Coordinate-Free Ordering for Compressing Social Networks.
+[arXiv:1011.5425v2](https://arxiv.org/abs/1011.5425v2).
+
+[RAK07] U. Raghavan, R. Albert and S. Kumara. Near linear time algorithm to
+detect community structures in large-scale networks.
+[arXiv:0709.2938v1](https://arxiv.org/abs/0709.2938v1).
+
+[RN10] P. Ronhovde and Z. Nussinov. Local resolution-limit-free Potts model for
+community detection. [arXiv:0803.2548v4](https://arxiv.org/abs/0803.2548v4).
