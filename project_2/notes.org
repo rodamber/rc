@@ -42,8 +42,8 @@ in main memory and provide very fast amortised random access to their edges.
 Because better compression schemes allow for larger graphs to fit in main
 memory. Most graph mining
 ** 4. How does it compare to other approaches to the same problem?
-It's coordinate-free, parameter-free and performs better than any other existing
-approach for their purpose.
+It's coordinate-free, parameter-free (not really) and performs better than any
+other existing approach for their purpose.
 ** 5. How does it work?
 lambda of x = label of node x
 gamma = resolution parameter
@@ -77,16 +77,7 @@ algorithms that minimize HT and VI perform better <-- this is the definition of
 empiric...).
 
 * Doubts
-- [ ] How can we compress the graph if it can't be placed in main memory in the
-  first place?
-- [ ] Whats the complexity of edge access?
-- [ ] What is overdecomposition?
 
 * Cool stuff
-** Compressed Row Storage
-Maybe it would be cool to give an overview of compressed row storage to give an
-intro to graph compression and, mainly, why the ordering of the nodes is important.
-
-*Doesn't work* CRS doesn't depend on the ordering of nodes.
 ** Gephi
 Maybe we could use Gephi to generate some graph figures, if needed.

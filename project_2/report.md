@@ -2,8 +2,7 @@
 
 We present a summary of how Layered Label Propagation (LLP), a highly scalable,
 coordinate-free, graph reordering algorithm, uses community finding techniques
-to permute very large (immutable) graphs (possibly billions of nodes), with
-applications to graph compression.
+to permute very large immutable graphs, with applications to graph compression.
 
 # Introduction
 
@@ -26,23 +25,21 @@ but large graphs of any kind.
 While several approaches have been taken regarding graph compression, we chose
 to analyze how LLP uses community finding techniques to reorder the nodes of a
 graph in order to exploit its inner structure and obtain, in combination with
-the Boldi and Vigna (BV) compression method (which we do not explore here), a
-better compression than current alternatives.
+the Boldi and Vigna (BV) compression method (which we do not explore here),
+superior compression products than current alternatives.
 
-# Problem Definition
-
-# Layered Label Propagation
+## Layered Label Propagation 
 
 LLP was first mentioned in *FIXME*. The objective was to find effective general
-(i.e. suitable to several types of graphs) techniques to store and access
-graphs. Moreover, the resulting compressed data structure must provide fast
-amortised random access to an edge. The authors address this problem by trying
-to apply *intrinsic* heuristics (i.e., ones that depend only on the inner
-structure of the network), in contrast to *extrinsic* heuristics (which are
-features of each specific kind of network). For instance, in a web graph one can
-find a permutation of the nodes in the URL-based lexicographic order which, in
-practice, can be shown to produce impressive compression ratios. However, this
-ordering isn't applicable to all sorts of networks.
+techniques to store and access graphs. Moreover, the resulting compressed data
+structure must provide fast amortised random access to an edge. The authors
+address this problem by applying *intrinsic* heuristics (i.e., ones that depend
+only on the inner structure of the network), in contrast to *extrinsic*
+heuristics (which are features of each specific kind of network). For instance,
+in a web graph one can find a permutation of the nodes in the URL-based
+lexicographic order which, in practice, can be shown to produce impressive
+compression ratios. However, this ordering isn't applicable to all sorts of
+networks.
 
 <!-- Maybe stretches the idea a little bit too far... -->
 Nonetheless, the ordering of the nodes becomes important once we consider that,
@@ -57,50 +54,94 @@ the graphs, generating different compression ratios depending on how the dataset
 is originally presented. LLP, on the other hand, is *coordinate-free*, i.e.,
 attains similar results independently of the original ordering.
 
-
 # Problem Definition
 
-The general problem of a graph-compression algorithm can be defined as a
-function which receives a graph $G$ as input and stores it in a compressed data
-structure; the output of this algorithm will depend on a node ordering
-$\pi : V_G \rightarrow |V_G|$, an application that for any given node it will
-return its index within this list, in such a way that the compression-ratio is
-highly correlated with a specific numbering. This optimization problem has as
-objective to find such an order $\pi$ that minimizes the amount of memory
-required to store this graph. In this analyze we shall assume that a graph $G$
-with $n$ nodes has $V_G = n$, so a node order is actually a permutation $\pi : n
-\rightarrow n$.
+Given an input graph, devise an ordering $\pi : V_G \rightarrow |V_G|$
+that minimizes the number of bits per edge needed to store the graph, while
+providing fast amortised random access to its edges.
 
-<!-- is this english? -->
-The graph-compression scheme, used to obtain the results present in this report,
-is BV compression-scheme used within the WebGraph framework, used for handling
-large web-like graphs, but in social networks there are no natural ordering,
-since node names in this genre of network, have no prefix or it has no meaning,
-lexicographical ordering is no longer viable.
+Obviously, the algorithm must be parameterised by a compression method. The
+authors of LLP chose to combine it the BV compression algorithm, as they regard
+it as the "*de facto* standard for handling large web-like graphs". The
+procedure relies heavily on similarity and locality to manage its good results,
+which are exactly the properties what LLP tries to maximise.
 
-<!-- incomplete -->
-It is quite relevant that this algorithm is coordinate-free,
+It is also worth noticing that this problem is NP-hard. Therefore, it is
+appropriate to craft heuristics that work well in most practical cases. In this
+case we are only interested in intrinsic heuristics.
 
-# Ordering Considerations
+# General Label Propagation
 
-As mentioned previously there are various different ordering techniques that
-derive from the origin of the information available from the graph. What we just
-want to remark is that, most intrinsic techniques while attaining different
-results and consequently different compression ratios, all depend on the initial
-numbering of the nodes, since they work on the adjacency matrix $A_G$. This
-overlooked situation turns out to be very relevant as it was noted that applying
-this intrinsic ordering techniques to randomly numbered graphs produces worse
-compression ratios than started from, for example, a URL-ordered web graph.
-\newline Also, we previously mentioned the term \textit{coordinate-free}
-algorithms. This term refers to those algorithms that achieve almost the same
-compression performances when initialized from any initial ordering. This is
-desired since it avoids dependency on the way in which the graph is presented
-initially, and also on \textit{Layered Label Propagation} all the tests
-regarding it's implementation presupposes starting from a random permutation of
-the original graph. This way we have a strong validation of the importance of
-coordinate-free algorithms.
+As said before, LLP exploits the inner structure of the network to devise
+intrinsic orderings of its nodes, so it may be appropriate to approach the issue
+of graph reordering as a community finding problem. However, the size of the
+graphs we are handling demand the usage of highly efficient algorithms.
 
-# Quality measures
+Label propagation algorithms seem fit to address this problem because, not only
+no *a priori* information is needed regarding the structure of the network, they
+are also efficient, requiring only a few passes through the network and are
+linear in the number of edges.
+
+The usual procedure for label propagation algorithms is presented:
+
+```
+Label Propagation
+
+
+
+
+```
+
+<!-- -------------------- -->
+
+Simply, this type of algorithms start by giving every node a different label.
+
+At each iteration, every node update it's label (that represents the cluster it
+currently belongs to) according to some update rule.
+
+Algorithm terminates as soon as no more updates take place. What differs from
+the various label propagation algorithms is the rule applied when updating a
+node's label.
+
+The updating rule in the referred as the standard label propagation algorithm,
+is for every node to take the label that occurs more frequently on its
+neighborhood, being another way to view this rule, as every node in the network
+chooses to join the largest neighboring community.
+
+This updating rule make that dense consensus groups are created throughout the
+network.
+
+What tends to happen, when applying this rule, is to observe the production of
+one giant cluster containing the majority of nodes, due to the topology of
+social networks.
+
+To overcome this problem, it is used a variant called Absolute Pott Model (APM),
+that makes part of the \textit{Layered Label Propagation} algorithm.
+
+This algorithm introduces a non local weight discount term when considering
+weight preferences for choosing a node label.
+
+Previously (in standard label propagation) the label chosen by a node
+\textit{x}, was the one that maximized $k_i$, being $k_i$ the number of
+neighbors having given label.
+
+In APM, this value is subtracted by the referenced discount term $\gamma (v_i -
+k_i)$, with $v_i$ being the overall number of nodes in the given label.
+
+This way, the value is the one that maximizes\newline $$k_i - \gamma (v_i -
+k_i)$$ Note that, if $\gamma$=0, we have a standard label propagation choosing
+method, and also for low $\gamma$ values, outer and further nodes tend to have
+more weight at the time of label choosing, resulting in large and sparse
+clusters, and for higher $\gamma$ values, local nodes have more weight at label
+choosing time, resulting in denser and smaller clusters.
+
+# The Algorithm
+
+# Analysis
+
+<!-- quality measures, reconstructing host structure, blah, blah, blah... -->
+
+## Quality measures
 
 In this paper were presented two measures to prove empiricaly that existing
 aproaches compress well web graphs. The first measure exposed in this paper is
@@ -143,45 +184,4 @@ $$VI(\mathcal{H}_{|\pi},\mathcal{H})=H(\mathcal{H}_{|\pi})-H(\mathcal{H})$$
 Since $$ \leq VI(\mathcal{H}_{|\pi},\mathcal{H})\leq VI(\mathcal{H}_{|\pi} +
 \mathcal{H}) $$
 
-# Label Propagation Algorithms
-
-As stated before, most of intrinsic ordering analyzed fail to produce
-satisfactory compression ratios when applied to a randomly perpetuated graph.
-This is attributed to the fact they fail in reconstructing host information as
-we discussed previously. So in order to surpass this situation, this was
-addressed as a clustering problem. Label propagation algorithms address this
-type of problem and present a wanted solution, in terms that they use the
-network structure alone as their guide, don't require external information about
-communities in the graph and are linear in the number of edges.\newline Simply,
-this type of algorithms start by giving every node a different label. At each
-iteration, every node update it's label (that represents the cluster it
-currently belongs to) according to some update rule. Algorithm terminates as
-soon as no more updates take place. What differs from the various label
-propagation algorithms is the rule applied when updating a node's label.\newline
-The updating rule in the referred as the standard label propagation algorithm,
-is for every node to take the label that occurs more frequently on its
-neighborhood, being another way to view this rule, as every node in the network
-chooses to join the largest neighboring community. This updating rule make that
-dense consensus groups are created throughout the network. What tends to happen,
-when applying this rule, is to observe the production of one giant cluster
-containing the majority of nodes, due to the topology of social networks. To
-overcome this problem, it is used a variant called Absolute Pott Model (APM),
-that makes part of the \textit{Layered Label Propagation} algorithm. This
-algorithm introduces a non local weight discount term when considering weight
-preferences for choosing a node label. Previously (in standard label
-propagation) the label chosen by a node \textit{x}, was the one that maximized
-$k_i$, being $k_i$ the number of neighbors having given label. In APM, this
-value is subtracted by the referenced discount term $\gamma (v_i - k_i)$, with
-$v_i$ being the overall number of nodes in the given label. This way, the value
-is the one that maximizes\newline $$k_i - \gamma (v_i - k_i)$$ Note that, if
-$\gamma$=0, we have a standard label propagation choosing method, and also for
-low $\gamma$ values, outer and further nodes tend to have more weight at the
-time of label choosing, resulting in large and sparse clusters, and for higher
-$\gamma$ values, local nodes have more weight at label choosing time, resulting
-in denser and smaller clusters.
-
-# Layered Label Propagation
-
-# Comparisons
-
-# Conclusion
+# Performance Results
