@@ -19,13 +19,13 @@
     - [X] What are they?
   - [X] Algorithms in related works produce different results depending on the
     initial ordering of the nodes and, indeed, produce bad compression results.
-- [ ] Problem is NP-Hard. Why?
+- [X] Problem is NP-Hard.
 - [X] LLP is coordinate-free.
   - [X] Achieves similar compression performances independently of the initial
     ordering.
 - [ ] LLP is parameter-free (not really: depends on the number of resolution
   parameters and on the stopping criterion).
-- [ ] LLP was combined with BV.
+- [X] LLP was combined wtth BV.
 - [ ] Highly scalable. Why?
   - "most of the time is spent on sampling values of gamma to produce base
     clusterings, and this operation can be performed for each gamma in a fully
