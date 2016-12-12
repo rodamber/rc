@@ -59,8 +59,8 @@ Most current algorithms are sensitive to the initial ordering of the graphs.
 ** How does it work?
 *** Absolute Potts Model (APM)
 **** Shortcomings
-- no way to predetermine an "optimal" value for $\gamma$
-- yields an enormous amount of huge-sized clusters.
+- No known way to predetermine an "optimal" value for $\gamma$.
+- Tends to produce clusters with sizes that follow a heavy-tailed decreasing distribution, yielding both a huge number of cluster and clusters with a huge number of nodes.
 ** How does it work?
 *** LLP
 - Starts with any initial ordering of the nodes.
