@@ -3,33 +3,33 @@
 We present a summary of how Layered Label Propagation (LLP), a highly scalable,
 coordinate-free, *graph reordering algorithm*, uses community finding techniques
 to permute very large immutable graphs, with applications to *graph compression*.
-** Motivation/Problem
+** Motivation
+*** Problem
 Large graphs (millions or billions of nodes) may not fit in main memory.
 - Standard graph mining algorithms usually assume they do.
 # Example of the web graph
 *** What it is
 A graph node ordering algorithm.
   - Not a compression algorithm.
-** Why do we need it?
+** Why would we want it?
 Most current algorithms are sensitive to the initial ordering of the graphs.
   - Different compression ratios depending on how the dataset is originally presented.
-  - Layered Label Propagation (LLP) is *efficient* and *coordinate-free*.
-    - Attains similar results independently of the initial ordering.
+Layered Label Propagation (LLP) is *efficient* and *coordinate-free*.
+  - Attains similar results independently of the initial ordering.
 ** What does it try to acomplish?
-- Effective *general* techniques to store and access graphs.
 - Resulting compressed data structure must provide *fast amortised random
   access* to an edge.
+- Effective *general* techniques to store and access graphs.
 ** General idea
-- Combines with the Boldi and Vigna (BV) compression algorithm.
-  - "/de facto/ standard for handling large web-like graphs".
 - Exploits the inner structure of the network to devise *intrinsic* orderings.
   - Approached as a *community finding* problem.
+- Combines with the Boldi and Vigna (BV) compression algorithm.
+  - "/de facto/ standard for handling large web-like graphs".
 ** General idea
 *** Layered Label Propagation
-- *Coordinate-free*.
-- Exploits *similarity* and *locality*.
-  - *similarity*: nodes tend to have resembling sets of neighbours if they're close to each other in the ordering.
-  - *locality*: most of the edges are shared between nodes close to each other in the ordering.
+Exploits *similarity* and *locality*.
+- *similarity*: nodes tend to have resembling sets of neighbours if they're close to each other in the ordering.
+- *locality*: most of the edges are shared between nodes close to each other in the ordering.
 ** How does it work?
 *** Standard Label Propagation
 - One of a class of community finding algorithms.
@@ -47,10 +47,11 @@ Most current algorithms are sensitive to the initial ordering of the graphs.
 ** How does it work?
 *** Absolute Potts Model (APM)
   - Variant of label propagation, with new label update rule.
-  - Addresses the resolution limit problem in community detection by introducing a new weight parameter.
+  - Addresses the resolution limit problem in community detection by introducing a new update rule.
     - *Standard label propagation*: label chosen is the one that maximizes $k_i$
       (number of neighbours with label $\lambda_i$)
     - *APM*: maximize $k_i - \gamma(v_i - k_i)$
+      - $0 <= \gamma <= 1$ usually.
       - $v_i$ is the number of nodes in the network with label $\lambda_i$.
 ** How does it work?
 *** Absolute Potts Model (APM)
@@ -75,7 +76,7 @@ $$HT(\mathcal{H},\pi)= 1 -\dfrac{\sum_{i=1}^{|V_G|-1}
 *** Variation of Information
 $$VI(\mathcal{H}, \mathcal{H}_{|\pi}) = H(\mathcal{H}_{|\pi}) - H(\mathcal{H})$$
 $$H(\mathcal{U}) = - \sum\limits_{i=0}^R P(i)\,log(P(i)),\quad P(i) = \frac{|\mathcal{U}_i|}{|\mathcal{V}_i|}$$
-*** Highly parallel
+# *** Highly parallel
 ** References
 - P. Boldi, M. Rosa, M. Santini and S. Vigna. Layered Label Propagation: A MultiResolution Coordinate-Free Ordering for Compressing Social Networks. [[https://arxiv.org/abs/1011.5425v2][arXiv:1011.5425v2]].
 - U. Raghavan, R. Albert and S. Kumara. Near linear time algorithm to detect community structures in large-scale networks. [[https://arxiv.org/abs/0709.2938v1][arXiv:0709.2938v1]].
